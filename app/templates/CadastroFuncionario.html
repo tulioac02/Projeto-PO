@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="flex-shrink-0">
+    <div class="container" style="margin-top: 6%;">
+      <h1 class="mt-5">Cadastro de funcionarios</h1>
+      <p class="lead">Insira os funcionarios que serão responsavéis pelo serviços</p>
+    </div>
+  </main>
+  
+  <footer class="footer py-3 bg-light">
+    <div class="container">
+        <form method='POST'>{% csrf_token %}
+            <table>{{form.as_table}}</table>
+            <input type='submit' class="btn btn-primary" style="margin-top: 2%;" value='Cadastrar' />
+        </form>
+        
+        <ul style="margin-top: 2%;" >
+            {% for fun in Funcionarios %}
+                <li><pre>{{fun.name}} - {{fun.idade}}</pre></li>
+            {% endfor %}
+        </ul>
+    </div>
+  </footer>
+{% endblock %}
