@@ -1,8 +1,8 @@
 ### Pesquisa Operacional: Otimização
-##Problema do Transporte
+## Problema do Transporte
 
-#Introdução
+# Introdução
 ...
-#Tecnologias
-*[Python][*** site aqui ***] : Linguagem de Programação
+# Tecnologias
+* [Python][*** site aqui ***] : Linguagem de Programação
 
