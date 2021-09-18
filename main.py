@@ -1,125 +1,89 @@
 import gurobipy as gp
 
-fabricas = input("Digite nova fabrica")
-
 # Parametros do problema
 qtd_fabricas = 3
 qtd_clientes = 2
-vet_ofertas_prod_01 = [200, 250, 350]
-vet_demandas_prod_01 = [300, 500]
-vet_custos_prod_01 = [[13.15, 13.10], [12.92, 12.86], [12.64, 12.58]]
+qtd_produtos = 3
 
-vet_ofertas_prod_02 = [150, 90, 60]
-vet_demandas_prod_02 = [200, 100]
-vet_custos_prod_02 = [[6.97, 6.94],
-                      [6.21, 6.18],
-                      [6.98, 6.95]]
+vet_ofertas = [[200, 250, 350], [150, 90, 60], [30, 50, 40]]
 
-vet_ofertas_prod_03 = [30, 50, 40]
-vet_demandas_prod_03 = [40, 80]
-vet_custos_prod_03 = [[22.81, 22.71], [27.04, 26.92], [23.72, 23.60]]
+vet_demandas = [[300, 500], [200, 100], [40, 80]]
 
-# Rótulos das fábricas e clientes
+vet_custos = [[[12.12, 12.12], [10.90, 10.90], [10.35, 10.35]],
+              [[6.45, 6.45], [5.2, 5.2], [5.83, 5.83]],
+              [[20.75, 20.75], [23, 23], [19.14, 19.14]]]
+
+vet_fretes = [[[1.03, 0.98], [2.02, 1.96], [2.29, 2.23]],
+              [[0.52, 0.49], [1.10, 0.98], [1.15, 1.12]],
+              [[2.06, 1.96], [4.04, 3.92], [4.58, 4.46]]]
+
+# Rótulos das fábricas, clientes e produtos
+produtos = list()
+for i in range(qtd_produtos):
+    produtos.append("Pro_{}".format(i + 1))
+
 fabricas = list()
-for i in range(qtd_fabricas):
-    fabricas.append("Fab_{}".format(i + 1))
+for j in range(qtd_fabricas):
+    fabricas.append("Fab_{}".format(j + 1))
 
 clientes = list()
-for j in range(qtd_clientes):
-    clientes.append("Cli_{}".format(j + 1))
+for k in range(qtd_clientes):
+    clientes.append("Cli_{}".format(k + 1))
 
+# Dicionário com as Ofertas
+ofertas = dict()
+for i in range(qtd_produtos):
+    for j in range(qtd_fabricas):
+        rot_fab = fabricas[j]
+        rot_pro = produtos[i]
+        ofertas[rot_pro, rot_fab] = vet_ofertas[i][j]
 
-# Dicionário com as ofertas
-ofertas_prod_01 = dict()
-for idx, valor in enumerate(vet_ofertas_prod_01):
-    rotulo = fabricas[idx]
-    ofertas_prod_01[rotulo] = valor
-
-ofertas_prod_02 = dict()
-for idx, valor in enumerate(vet_ofertas_prod_02):
-    rotulo = fabricas[idx]
-    ofertas_prod_02[rotulo] = valor
-
-ofertas_prod_03 = dict()
-for idx, valor in enumerate(vet_ofertas_prod_03):
-    rotulo = fabricas[idx]
-    ofertas_prod_03[rotulo] = valor
-
-# Dicionário com as demandas
-demandas_prod_01 = dict()
-for idx, valor in enumerate(vet_demandas_prod_01):
-    rotulo = clientes[idx]
-    demandas_prod_01[rotulo] = valor
-
-demandas_prod_02 = dict()
-for idx, valor in enumerate(vet_demandas_prod_02):
-    rotulo = clientes[idx]
-    demandas_prod_02[rotulo] = valor
-
-demandas_prod_03 = dict()
-for idx, valor in enumerate(vet_demandas_prod_03):
-    rotulo = clientes[idx]
-    demandas_prod_03[rotulo] = valor
-
-# Dicionário de custos
-custos_prod_01 = dict()
-for i in range(qtd_fabricas):
+#Dicionário com a Demandas
+demandas = dict()
+for i in range(qtd_produtos):
     for j in range(qtd_clientes):
-        rot_fab = fabricas[i]
+        rot_pro = produtos[i]
         rot_cli = clientes[j]
-        custos_prod_01[rot_fab, rot_cli] = vet_custos_prod_01[i][j]
+        demandas[rot_pro, rot_cli] = vet_demandas[i][j]
 
-custos_prod_02 = dict()
-for i in range(qtd_fabricas):
-    for j in range(qtd_clientes):
-        rot_fab = fabricas[i]
-        rot_cli = clientes[j]
-        custos_prod_02[rot_fab, rot_cli] = vet_custos_prod_02[i][j]
+# Associando Fabricas com Clientes com Preço Total
+total = dict()
+for i in range(qtd_produtos):
+    for j in range(qtd_fabricas):
+        for k in range(qtd_clientes):
+            rot_pro = produtos[i]
+            rot_fab = fabricas[j]
+            rot_cli = clientes[k]
+            total[rot_pro, rot_fab, rot_cli] = vet_custos[i][j][k] + vet_fretes[i][j][k]
 
-custos_prod_03 = dict()
-for i in range(qtd_fabricas):
-    for j in range(qtd_clientes):
-        rot_fab = fabricas[i]
-        rot_cli = clientes[j]
-        custos_prod_03[rot_fab, rot_cli] = vet_custos_prod_03[i][j]
+#print("Produtos: ", produtos)
+#print("Fabricas: ", fabricas)
+#print("Clientes: ", clientes)
+#print("Ofertas: ", ofertas)
+#print("Demandas: ", demandas)
+#print("Custos dos Produtos: ", custos)
+#print("Custos dos Fretes: ", fretes)
+#print("Custos dos Produtos com Frete: ", total)
 
-#print(fabricas)
-#print(clientes)
-
-print("Ofertas do produto 01:", ofertas_prod_01)
-print("Demanda do produto 01:", demandas_prod_01)
-print("Custos do produto 01:", custos_prod_01)
-
-print("Ofertas do produto 02:", ofertas_prod_02)
-print("Demanda do produto 02:", demandas_prod_02)
-print("Custos do produto 02:", custos_prod_02)
-
-print("Ofertas do produto 03:", ofertas_prod_03)
-print("Demanda do produto 03:", demandas_prod_03)
-print("Custos do produto 03:", custos_prod_03)
-
-# Criando modelo
+# Criando o Modelo
 m = gp.Model()
 
 # Variáveis de Decisão
-x = m.addVars(fabricas, clientes, vtype=gp.GRB.INTEGER)
-y = m.addVars(fabricas, clientes, vtype=gp.GRB.INTEGER)
-z = m.addVars(fabricas, clientes, vtype=gp.GRB.INTEGER)
+x = m.addVars(produtos, fabricas, clientes, vtype=gp.GRB.INTEGER)
 
-# Função objetivo
-m.setObjective(gp.quicksum(x[i, j] * custos_prod_01[i, j] for i in fabricas for j in clientes) +
-               gp.quicksum(y[i, j] * custos_prod_02[i, j] for i in fabricas for j in clientes) +
-               gp.quicksum(z[i, j] * custos_prod_03[i, j] for i in fabricas for j in clientes), sense=gp.GRB.MINIMIZE)
+# Função Objetivo
+m.setObjective(gp.quicksum(x[i, j, k] * total[i, j, k] for i in produtos for j in fabricas for k in clientes),
+               sense=gp.GRB.MINIMIZE)
 
 # Restrições de oferta
-c1 = m.addConstrs(gp.quicksum(x[i, j] for j in clientes) == ofertas_prod_01[i] for i in fabricas)
-c2 = m.addConstrs(gp.quicksum(y[i, j] for j in clientes) == ofertas_prod_02[i] for i in fabricas)
-c3 = m.addConstrs(gp.quicksum(z[i, j] for j in clientes) == ofertas_prod_03[i] for i in fabricas)
+c1 = m.addConstrs(gp.quicksum(x[i, j, k] for k in clientes)
+                  == ofertas[i, j] for i in produtos for j in fabricas)
 
 # Restrições de demanda
-c4 = m.addConstrs(gp.quicksum(x[i, j] for i in fabricas) == demandas_prod_01[j] for j in clientes)
-c5 = m.addConstrs(gp.quicksum(y[i, j] for i in fabricas) == demandas_prod_02[j] for j in clientes)
-c6 = m.addConstrs(gp.quicksum(z[i, j] for i in fabricas) == demandas_prod_03[j] for j in clientes)
+c2 = m.addConstrs(gp.quicksum(x[i, j, k] for j in fabricas)
+                  == demandas[i, k] for i in produtos for k in clientes)
 
-# Executa o modelo
+#Executa o modelo
 m.optimize()
+
+print(x)
