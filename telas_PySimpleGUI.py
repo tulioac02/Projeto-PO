@@ -254,7 +254,7 @@ while True:
 
     # produtos cadastrados para mostrar produtos e vice versa
     elif telas == tela_cad_produto and eventos == 'Produtos Cadastrados':
-        tela_ls_pd.un_hide()
+        tela_ls_pd = mostrar_produtos(produtos)
         tela_cad_produto.hide()
 
     elif telas == tela_ls_pd and eventos == 'Cadastrar Produtos':
