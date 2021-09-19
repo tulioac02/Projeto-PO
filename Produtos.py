@@ -8,5 +8,3 @@ class Produtos:
 
     def __repr__(self):
         return self.nome
-
-
