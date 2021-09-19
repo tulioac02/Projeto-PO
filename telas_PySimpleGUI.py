@@ -49,7 +49,7 @@ def cadastrar_produtos():
 def mostrar_produtos(ls_prod):
     layout_mostrar_produtos = [
         [Sg.Menu(menu_opt)],
-        [Sg.Listbox(values=[prod for prod in ls_prod.replace('[', '').replace(']', '').replace(',', '')], key='produtos', size=(100, 25))],
+        [Sg.Listbox(values=[items for items in ls_prod], key='produtos', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
     mostrar_pd = Sg.Window('Lista de Produtos', layout=layout_mostrar_produtos, element_justification='c',
