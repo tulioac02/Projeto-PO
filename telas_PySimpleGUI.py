@@ -92,8 +92,8 @@ def cadastrar_fornecedor():
         [Sg.Menu(menu_opt)],
 
         [Sg.Text('Nome do Fornecedor'), Sg.Text('Cidade'), Sg.Text('UF')],
-        [Sg.Input(key='nome_fornecedor', size=(20, 10)), Sg.Input(key='cidade',
-                                                                  size=(20, 10)), Sg.Input(key='uf', size=(5, 10))],
+        [Sg.Input(key='nome_fornecedor', size=(20, 10)),
+         Sg.Input(key='cidade', size=(20, 10)), Sg.Input(key='uf', size=(5, 10))],
 
         [Sg.Text('Longitude'), Sg.Text('Latitude'), Sg.Text('Preço/KM')],
         [Sg.Input(key='long', size=(20, 10)), Sg.Input(key='lat', size=(20, 10)),
@@ -207,19 +207,19 @@ while True:
     if telas == tela_inicio and eventos == Sg.WINDOW_CLOSED:
         break
 
-    # Em Inicio clicar em cadastrar produtos
-    if telas == tela_inicio and eventos == 'Cadastrar Produtos':
+    # cadastro de produtos
+    if telas == tela_cad_produto:
         tela_cad_produto = cadastrar_produtos()
         tela_inicio.hide()
+        if eventos == 'Cadastrar':
+            if dados['nome_produto'] != '':
+                nome = dados['nome_produto']
+                p = Produtos.Produtos(nome)
+                Produtos.listProdutos.append(p)
+                tela_cad_produto.hide()
+            else:
+                Sg.popup('Nome do produto em branco!')
 
-    if telas == tela_cad_produto and eventos == 'Cadastrar':
-        if dados['nome_produto'] != '':
-            nome = dados['nome_produto']
-            p = Produtos.Produtos(nome)
-            Produtos.listProdutos.append(p)
-            # Sg.popup_quick_message(Produtos.listProdutos.__repr__())
-        else:
-            Sg.popup('Nome do produto em branco!')
 
     # Em Inicio clicar em mostrar produtos
     elif telas == tela_inicio and eventos == 'Produtos Cadastrados':
