@@ -8,3 +8,7 @@ class Produtos:
 
     def __repr__(self):
         return self.nome
+
+
+p = Produtos('Morango')
+listProdutos.append(p)

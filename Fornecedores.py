@@ -1,20 +1,19 @@
+listFornecedores = []
+
+
 class Fornecedores:
-    def __init__(self, nome, cidade, UF, logitude, latitude, preco_km):
+    def __init__(self, nome, cidade, UF, frete):
         self.nome = nome
         self.cidade = cidade
         self.UF = UF
-        self.logitude = logitude
-        self.latitude = latitude
-        self.preco_km = preco_km
+        self.frete = frete
+
+    def __repr__(self):
+        return '{} - {} - {} - {}'.format(self.nome, self.cidade, self.UF, self.frete)
 
 
-nome = input("Digite o nome")
-cidade = input("Digite a cidade")
-p1 = Fornecedores(nome, cidade, "MG", -88569525, -85426592, 25.50)
+f1 = Fornecedores('Constrular', 'Minas Novas', 'MG', 5.00)
+listFornecedores.append(f1)
 
-print(p1.nome)
-print(p1.cidade)
-print(p1.UF)
-print(p1.logitude)
-print(p1.latitude)
-print(p1.preco_km)
+f2 = Fornecedores('Constrular', 'Turmalina', 'MG', 5.50)
+listFornecedores.append(f2)
