@@ -37,7 +37,7 @@ def cadastrar_produtos():
         [Sg.Input(key='nome_produto', size=(47, 5))],
         [Sg.Text('Detalhes')],
         [Sg.Multiline(key='detalhes', size=(45, 3))],
-        [Sg.Button('Cadastrar', button_color='gray', pad=(0, 15))],
+        [Sg.Button('Cadastrar', key='btnCadastrar', button_color='gray', pad=(0, 15))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
     cadastrar_pd = Sg.Window('Cadastrar Produtos', layout=layout_cadastrar_produtos, element_justification='c',
@@ -137,7 +137,7 @@ def cadastrar_pedidos():
                     Sg.Input(key='demandas', size=(2, 10))],
     layout_pedido = [
         [Sg.Text('Produto'), Sg.Text('Fornecedor'), Sg.Text('Demanda')],
-        [layout_linha for i in range(num_linhas)],
+        layout_linha,
         [Sg.Button('Adicionar', button_color='gray', pad=(0, 115)),
          Sg.Button('Finalizar Pedido', button_color='gray', pad=(0, 115)),
          Sg.Button('Voltar', button_color='gray', pad=(0, 115))]
@@ -208,14 +208,15 @@ while True:
     if eventos == 'Cadastrar Produtos':
         tela_cad_produto = cadastrar_produtos()
         tela_inicio.hide()
-        if eventos == 'Cadastrar':
-            if dados['nome_produto'] != '':
-                nome = dados['nome_produto']
-                p = Produtos.Produtos(nome)
-                Produtos.listProdutos.append(p)
-                Sg.popup('Nome do produto em branco!')
-            else:
-                Sg.popup('Nome do produto em branco!')
+
+    if eventos == 'btnCadastrar':
+        if dados['nome_produto'] != '':
+            nome = dados['nome_produto']
+            p = Produtos.Produtos(nome)
+            Produtos.listProdutos.append(p)
+            Sg.popup('Cadastrado com sucesso', title='Mensagem')
+        else:
+            Sg.popup('Nome do produto em branco!', title='Mensagem')
 
 
     # Em Inicio clicar em mostrar produtos
@@ -244,18 +245,23 @@ while True:
         tela_ls_fornecedor = mostrar_fornecedores()
         tela_inicio.hide()
 
+
     if eventos == 'Fazer Pedido':
         tela_pedido = cadastrar_pedidos()
         telas.hide()
 
-    if eventos == 'Quem Somos':
-        tela_sobre = sobre()
-        telas.hide()
 
 
     # Em Inicio clicar em  Fornecedores Cadastrados
     if eventos == 'Finalizar Pedido':
         tela_calculo = calcular_pedido()
+        telas.hide()
+
+
+
+    if eventos == 'Quem Somos':
+        tela_sobre = sobre()
+        telas.hide()
 
     # # produtos cadastrados para mostrar produtos e vice versa
     # elif telas == tela_cad_produto and eventos == 'Produtos Cadastrados':
