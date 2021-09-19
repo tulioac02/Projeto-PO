@@ -1,5 +1,5 @@
 import PySimpleGUI as Sg
-import Produtos
+import Produtos, Fornecedores
 
 # Telas de Cadastro de Produtos
 # Telas para Mostrar Produtos
@@ -37,7 +37,7 @@ def cadastrar_produtos():
         [Sg.Input(key='nome_produto', size=(47, 5))],
         [Sg.Text('Detalhes')],
         [Sg.Multiline(key='detalhes', size=(45, 3))],
-        [Sg.Button('Cadastrar', key='btnCadastrar', button_color='gray', pad=(0, 15))],
+        [Sg.Button('Cadastrar', key='btnCadProduto', button_color='gray', pad=(0, 15))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
     cadastrar_pd = Sg.Window('Cadastrar Produtos', layout=layout_cadastrar_produtos, element_justification='c',
@@ -90,17 +90,16 @@ def cadastrar_fornecedor():
         [Sg.Input(key='nome_fornecedor', size=(20, 10)),
          Sg.Input(key='cidade', size=(20, 10)), Sg.Input(key='uf', size=(5, 10))],
 
-        [Sg.Text('Longitude'), Sg.Text('Latitude'), Sg.Text('Preço/KM')],
-        [Sg.Input(key='long', size=(20, 10)), Sg.Input(key='lat', size=(20, 10)),
-         Sg.Input(key='preco_km', size=(5, 10))],
+        [Sg.Text('Frete')],
+        [Sg.Input(key='frete', size=(5, 10))],
 
-        [Sg.Button('Cadastrar Fornecedor', button_color='gray', pad=(0, 15))],
+        [Sg.Button('Cadastrar Fornecedor', key='btnCadFornecedor', button_color='gray', pad=(0, 15))],
 
         [Sg.Text('Nome do Produto'), Sg.Text('Preço Produto'), Sg.Text('Oferta')],
         [Sg.Input(key='nome_produto', size=(30, 10)), Sg.Input(key='preço_produto', size=(10, 10)),
          Sg.Input(key='oferta', size=(5, 5))],
 
-        [Sg.Button('Cadastrar Oferta', button_color='gray', pad=(0, 15))],
+        [Sg.Button('Cadastrar Oferta', key='btnCadOferta', button_color='gray', pad=(0, 15))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
     cad_fornecedor = Sg.Window('Cadastrar um fornecedor', layout=layout_cadastrar_fornecedor, element_justification='c',
@@ -110,18 +109,9 @@ def cadastrar_fornecedor():
 
 def mostrar_fornecedores():
     layout_mostrar_fornecedor = [
-
         [Sg.Text('Nome'), Sg.Text('Cidade'), Sg.Text('UF'), Sg.Text('Preço/KM')],
-        [Sg.Input(key='nome_fornecedor1', size=(20, 10)), Sg.Input(key='cidade_fornecedor1', size=(20, 10)),
-         Sg.Input(key='uf_fornecedor1', size=(2, 10)), Sg.Input(key='Preco_km1', size=(10, 10))],
-
-        [Sg.Input(key='nome_fornecedor2', size=(20, 10)), Sg.Input(key='cidade_fornecedor2', size=(20, 10)),
-         Sg.Input(key='uf_fornecedor2', size=(2, 10)), Sg.Input(key='Preco_km2', size=(10, 10))],
-
-        [Sg.Input(key='nome_fornecedor3', size=(20, 10)), Sg.Input(key='cidade_fornecedor3', size=(20, 10)),
-         Sg.Input(key='uf_fornecedor3', size=(2, 2)), Sg.Input(key='Preco_km3', size=(10, 10))],
-
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 115))]
+        [Sg.Listbox(values=[items for items in Fornecedores.listFornecedores], key='fornecedor', size=(80, 20))],
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
     ls_fornecedor = Sg.Window('Fornecedores Cadastrados', layout=layout_mostrar_fornecedor, element_justification='c',
                               size=(800, 400), margins=(0, 0), finalize=True)
@@ -209,7 +199,7 @@ while True:
         tela_cad_produto = cadastrar_produtos()
         tela_inicio.hide()
 
-    if eventos == 'btnCadastrar':
+    if eventos == 'btnCadProduto':
         if dados['nome_produto'] != '':
             nome = dados['nome_produto']
             p = Produtos.Produtos(nome)
@@ -239,6 +229,18 @@ while True:
     if eventos == 'Cadastrar Fornecedores':
         tela_cad_fornecedor = cadastrar_fornecedor()
         tela_inicio.hide()
+
+    if eventos == 'btnCadFornecedor':
+        if dados['nome_fornecedor'] != '' and dados['cidade'] != '' and dados['frete'] != '':
+            nome = dados['nome_fornecedor']
+            cidade = dados['cidade']
+            UF = dados['uf']
+            frete = dados['frete']
+            p = Fornecedores.Fornecedores(nome, cidade, UF, frete)
+            Fornecedores.listFornecedores.append(p)
+            Sg.popup('Cadastrado com sucesso', title='Mensagem')
+        else:
+            Sg.popup('Nome do produto em branco!', title='Mensagem')
 
     # Em Inicio clicar em  Fornecedores Cadastrados
     if eventos == 'Fornecedores Cadastrados':
