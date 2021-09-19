@@ -1,4 +1,5 @@
 import PySimpleGUI as Sg
+import Produtos
 
 Sg.theme('DefaultNoMoreNagging')
 
@@ -91,11 +92,15 @@ while True:
     if telas == tela_inicio and eventos == 'Cadastrar Produtos':
         tela_cad_produto = cadastrar_produtos()
         tela_inicio.hide()
-        if telas == tela_cad_produto and eventos == 'Cadastrar':
-            if dados['nome_produtos']:
-                produtos.append(dados['nome_produtos'])
-            else:
-                Sg.popup('Nome do produto em branco!')
+
+    if telas == tela_cad_produto and eventos == 'Cadastrar':
+        if dados['nome_produto'] != '':
+            nome = dados['nome_produto']
+            p = Produtos.Produtos(nome)
+            Produtos.listProdutos.append(p)
+            # Sg.popup_quick_message(Produtos.listProdutos.__repr__())
+        else:
+            Sg.popup('Nome do produto em branco!')
 
     # Em Inicio clicar em mostrar produtos
     elif telas == tela_inicio and eventos == 'Produtos Cadastrados':
