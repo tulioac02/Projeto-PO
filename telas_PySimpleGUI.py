@@ -104,7 +104,7 @@ while True:
 
     # Em Inicio clicar em mostrar produtos
     elif telas == tela_inicio and eventos == 'Produtos Cadastrados':
-        tela_mostrar_pd = mostrar_produtos(produtos)
+        tela_mostrar_pd = mostrar_produtos(Produtos.listProdutos)
         tela_inicio.hide()
 
     # Em Inicio clicar em Cadastrar Lojas
