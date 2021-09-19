@@ -33,7 +33,6 @@ def home():
 
 def cadastrar_produtos():
     layout_cadastrar_produtos = [
-        [Sg.Menu(menu_opt)],
         [Sg.Text('Nome do Produto')],
         [Sg.Input(key='nome_produto', size=(47, 5))],
         [Sg.Text('Detalhes')],
@@ -48,7 +47,6 @@ def cadastrar_produtos():
 
 def mostrar_produtos(ls_prod):
     layout_mostrar_produtos = [
-        [Sg.Menu(menu_opt)],
         [Sg.Listbox(values=[items for items in ls_prod], key='produtos', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
@@ -59,7 +57,6 @@ def mostrar_produtos(ls_prod):
 
 def cadastrar_loja():
     layout_cadastrar_lojas = [
-        [Sg.Menu(menu_opt)],
         [Sg.Text('Nome da Loja')],
         [Sg.Input(key='nome_loja', size=(47, 5))],
         [Sg.Text('Cidade'), Sg.Text('UF')],
@@ -78,7 +75,6 @@ def cadastrar_loja():
 
 def lojas_cadastradas():
     layout_ls_lojas = [
-        [Sg.Menu(menu_opt)],
         [Sg.Listbox(values=[], key='nome_loja', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 15))]
     ]
@@ -89,7 +85,6 @@ def lojas_cadastradas():
 
 def cadastrar_fornecedor():
     layout_cadastrar_fornecedor = [
-        [Sg.Menu(menu_opt)],
 
         [Sg.Text('Nome do Fornecedor'), Sg.Text('Cidade'), Sg.Text('UF')],
         [Sg.Input(key='nome_fornecedor', size=(20, 10)),
@@ -115,7 +110,6 @@ def cadastrar_fornecedor():
 
 def mostrar_fornecedores():
     layout_mostrar_fornecedor = [
-        [Sg.Menu(menu_opt)],
 
         [Sg.Text('Nome'), Sg.Text('Cidade'), Sg.Text('UF'), Sg.Text('Preço/KM')],
         [Sg.Input(key='nome_fornecedor1', size=(20, 10)), Sg.Input(key='cidade_fornecedor1', size=(20, 10)),
@@ -134,16 +128,19 @@ def mostrar_fornecedores():
     return ls_fornecedor
 
 
+num_linhas = 1
+
+
 def cadastrar_pedidos():
+    layout_linha = [Sg.InputCombo(values=Produtos.listProdutos, key='nome_produto', size=(20, 10)),
+                    Sg.Input(key='nome_fornecedor', size=(25, 10)),
+                    Sg.Input(key='demandas', size=(2, 10))],
     layout_pedido = [
-        [Sg.Menu(menu_opt)],
-
         [Sg.Text('Produto'), Sg.Text('Fornecedor'), Sg.Text('Demanda')],
-        [Sg.Input(key='nome_produto', size=(20, 10)), Sg.Input(key='nome_fornecedor', size=(25, 10)),
-         Sg.Input(key='demandas', size=(2, 10))],
-
-        [Sg.Button('Finalizar Pedido', button_color='gray', pad=(0, 115))],
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 115))]
+        [layout_linha for i in range(num_linhas)],
+        [Sg.Button('Adicionar', button_color='gray', pad=(0, 115)),
+         Sg.Button('Finalizar Pedido', button_color='gray', pad=(0, 115)),
+         Sg.Button('Voltar', button_color='gray', pad=(0, 115))]
     ]
     pedido = Sg.Window('Cadastrar Pedido', layout=layout_pedido, element_justification='c',
                        size=(800, 400), margins=(0, 0), finalize=True)
@@ -152,7 +149,6 @@ def cadastrar_pedidos():
 
 def calcular_pedido():
     layout_calc_pedido = [
-        [Sg.Menu(menu_opt)],
 
         [Sg.Input('Origem', size=(37, 10), justification='c'),
          Sg.Input('Destino', size=(40, 10), justification='c'),
@@ -197,18 +193,19 @@ def sobre():
 
 
 tela_inicio, tela_cad_produto, tela_ls_pd, tela_cad_loja, tela_ls_loja, tela_cad_fornecedor, tela_ls_fornecedor, \
-    tela_pedido, tela_calculo, tela_sobre = home(), None, None, None, None, None, None, None, None, None
+tela_pedido, tela_calculo, tela_sobre = home(), None, None, None, None, None, None, None, None, None
 
 produtos = list()
 clientes = list()
+
 while True:
     telas, eventos, dados = Sg.read_all_windows()
     # usuário fecha a janela no "x"
-    if telas == tela_inicio and eventos == Sg.WINDOW_CLOSED:
+    if eventos == Sg.WINDOW_CLOSED:
         break
 
     # cadastro de produtos
-    if telas == tela_cad_produto:
+    if eventos == 'Cadastrar Produtos':
         tela_cad_produto = cadastrar_produtos()
         tela_inicio.hide()
         if eventos == 'Cadastrar':
@@ -216,111 +213,114 @@ while True:
                 nome = dados['nome_produto']
                 p = Produtos.Produtos(nome)
                 Produtos.listProdutos.append(p)
-                tela_cad_produto.hide()
+                Sg.popup('Nome do produto em branco!')
             else:
                 Sg.popup('Nome do produto em branco!')
 
 
     # Em Inicio clicar em mostrar produtos
-    elif telas == tela_inicio and eventos == 'Produtos Cadastrados':
+    if eventos == 'Produtos Cadastrados':
         tela_mostrar_pd = mostrar_produtos(Produtos.listProdutos)
         tela_inicio.hide()
 
     # Em Inicio clicar em Cadastrar Lojas
-    elif telas == tela_inicio and eventos == 'Cadastrar Lojas':
+    if eventos == 'Cadastrar Lojas':
         # A ideia é que fossem armazenados numa lista de dicionários talvez
         tela_cad_loja = cadastrar_loja()
         tela_inicio.hide()
 
     # Em Inicio clicar em Lojas Cadastradas
-    elif telas == tela_inicio and eventos == 'Lojas Cadastradas':
+    if eventos == 'Lojas Cadastradas':
         tela_ls_loja = lojas_cadastradas()
         tela_inicio.hide()
 
     # Em Inicio clicar em Cadastrar Fornecedor
-    elif telas == tela_inicio and eventos == 'Cadastrar Fornecedores':
+    if eventos == 'Cadastrar Fornecedores':
         tela_cad_fornecedor = cadastrar_fornecedor()
         tela_inicio.hide()
 
     # Em Inicio clicar em  Fornecedores Cadastrados
-    elif telas == tela_inicio and eventos == 'Fornecedores Cadastrados':
+    if eventos == 'Fornecedores Cadastrados':
         tela_ls_fornecedor = mostrar_fornecedores()
         tela_inicio.hide()
 
-    # Em Inicio clicar em Cadastrar Pedido
-    elif telas == tela_inicio and eventos == 'Fazer Pedido':
-        tela_pedido = cadastrar_pedidos()
-        tela_inicio.hide()
-
-    # Em Inicio clicar em  Fornecedores Cadastrados
-    elif telas == tela_pedido and eventos == 'Finalizar Pedido':
-        tela_calculo = calcular_pedido()
-        tela_pedido.hide()
-
-    # produtos cadastrados para mostrar produtos e vice versa
-    elif telas == tela_cad_produto and eventos == 'Produtos Cadastrados':
-        tela_ls_pd = mostrar_produtos(produtos)
-        tela_cad_produto.hide()
-
-    elif telas == tela_ls_pd and eventos == 'Cadastrar Produtos':
-        tela_cad_produto.un_hide()
-        tela_ls_pd.hide()
-
-    # De Cadastrar Lojas ir para lojas cadastradas  e vice versa
-    elif telas == tela_cad_loja and eventos == 'Lojas Cadastradas':
-        tela_ls_loja = lojas_cadastradas()
-        tela_cad_loja.un_hide()
-
-    elif telas == tela_ls_loja and eventos == 'Cadastrar Lojas':
-        tela_cad_loja = cadastrar_loja()
-        tela_ls_loja.un_hide()
-
-    # Em Cadastrar Fornecedores ir Fornecedores cadastrados e vice versa
-    elif telas == tela_cad_fornecedor and eventos == 'Fornecedores Cadastrados':
-        tela_ls_fornecedor = mostrar_fornecedores()
-        tela_cad_fornecedor.hide()
-
-    elif telas == tela_ls_fornecedor and eventos == 'Cadastrar Fornecedores':
-        tela_cad_fornecedor = cadastrar_fornecedor()
-        tela_ls_fornecedor.hide()
-
-    elif telas == tela_calculo and eventos == 'Novo Calculo':
-        tela_pedido.un_hide()
-        tela_calculo.hide()
-
-    # De uma guia para outra
-    elif telas and eventos == 'Cadastrar Produtos':
-        tela_cad_produto = cadastrar_produtos()
-        telas.hide()
-
-    elif telas and eventos == 'Produtos Cadastrados':
-        tela_ls_produto = mostrar_produtos(produtos)
-        telas.hide()
-
-    elif telas and eventos == 'Cadastrar Lojas':
-        tela_cad_loja = cadastrar_loja()
-        telas.hide()
-
-    elif telas and eventos == 'Lojas Cadastradas':
-        tela_ls_loja = lojas_cadastradas()
-        telas.hide()
-
-    elif telas and eventos == 'Cadastrar Fornecedores':
-        tela_cad_fornecedor = cadastrar_fornecedor()
-        telas.hide()
-
-    elif telas and eventos == 'Fornecedores Cadastrados':
-        tela_ls_fornecedor = mostrar_fornecedores()
-        telas.hide()
-
-    elif telas and eventos == 'Fazer Pedido':
+    if eventos == 'Fazer Pedido':
         tela_pedido = cadastrar_pedidos()
         telas.hide()
 
-    elif telas and eventos == 'Quem Somos':
+    if eventos == 'Quem Somos':
         tela_sobre = sobre()
         telas.hide()
 
+
+    # Em Inicio clicar em  Fornecedores Cadastrados
+    if eventos == 'Finalizar Pedido':
+        tela_calculo = calcular_pedido()
+
+    # # produtos cadastrados para mostrar produtos e vice versa
+    # elif telas == tela_cad_produto and eventos == 'Produtos Cadastrados':
+    #     tela_ls_pd = mostrar_produtos(produtos)
+    #     tela_cad_produto.hide()
+    #
+    # elif telas == tela_ls_pd and eventos == 'Cadastrar Produtos':
+    #     tela_cad_produto.un_hide()
+    #     tela_ls_pd.hide()
+    #
+    # # De Cadastrar Lojas ir para lojas cadastradas  e vice versa
+    # elif telas == tela_cad_loja and eventos == 'Lojas Cadastradas':
+    #     tela_ls_loja = lojas_cadastradas()
+    #     tela_cad_loja.un_hide()
+    #
+    # elif telas == tela_ls_loja and eventos == 'Cadastrar Lojas':
+    #     tela_cad_loja = cadastrar_loja()
+    #     tela_ls_loja.un_hide()
+    #
+    # # Em Cadastrar Fornecedores ir Fornecedores cadastrados e vice versa
+    # elif telas == tela_cad_fornecedor and eventos == 'Fornecedores Cadastrados':
+    #     tela_ls_fornecedor = mostrar_fornecedores()
+    #     tela_cad_fornecedor.hide()
+    #
+    # elif telas == tela_ls_fornecedor and eventos == 'Cadastrar Fornecedores':
+    #     tela_cad_fornecedor = cadastrar_fornecedor()
+    #     tela_ls_fornecedor.hide()
+    #
+    # elif telas == tela_calculo and eventos == 'Novo Calculo':
+    #     tela_pedido.un_hide()
+    #     tela_calculo.hide()
+    #
+    # # De uma guia para outra
+    # elif telas and eventos == 'Cadastrar Produtos':
+    #     tela_cad_produto = cadastrar_produtos()
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Produtos Cadastrados':
+    #     tela_ls_produto = mostrar_produtos(produtos)
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Cadastrar Lojas':
+    #     tela_cad_loja = cadastrar_loja()
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Lojas Cadastradas':
+    #     tela_ls_loja = lojas_cadastradas()
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Cadastrar Fornecedores':
+    #     tela_cad_fornecedor = cadastrar_fornecedor()
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Fornecedores Cadastrados':
+    #     tela_ls_fornecedor = mostrar_fornecedores()
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Fazer Pedido':
+    #     tela_pedido = cadastrar_pedidos()
+    #     telas.hide()
+    #
+    # elif telas and eventos == 'Quem Somos':
+    #     tela_sobre = sobre()
+    #     telas.hide()
+    #
     # Em Inicio clicar em mostrar produtos
     elif telas and eventos == 'Voltar':
         telas.hide()
