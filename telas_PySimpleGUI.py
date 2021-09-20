@@ -1,3 +1,4 @@
+import sys
 import PySimpleGUI as Sg
 
 # cadastrar fornecedor X
@@ -18,8 +19,8 @@ produtos_cadastrados = {0: 'Telha1', 1: 'Telha2', 2: 'Telha3'}
 clientes_cadastrados = {0: 'Minas Novas', 1: 'Turmalina'}
 fornecedores_cadastrados = {0: 'Precom', 1: 'Brasilit', 2: 'Imbralit'}
 
-produto_pesquisado = list(('Telha1', 'Telha2'))
-cliente_pesquisado = list(('Minas Novas', 'Turmalina'))
+produto_pesquisado = list()
+cliente_pesquisado = list()
 fornecedor_pesquisado = list()
 
 quantFor = 1
@@ -179,8 +180,8 @@ def selecionar_clientes(num_cli):
     layout_selec_cliente = [
         [Sg.Text('')],
         *linhas,
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 20))],
-        [Sg.Button('Next', key='btnNextCli', button_color='gray', pad=(0, 20))]
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 20)),
+         Sg.Button('Next', key='btnNextCli', button_color='gray', pad=(0, 20))]
     ]
 
     selec_cliente = Sg.Window('Selecionar Clientes', layout=layout_selec_cliente, element_justification='c',
@@ -364,7 +365,7 @@ while True:
             if dados['linha_pro{}'.format(i)] != '':
                 if i > 0:
                     if dados['linha_pro{}'.format(i)] != dados['linha_pro{}'.format(i - 1)]:
-                        cliente_pesquisado.append(dados['linha_pro{}'.format(i)])
+                        produto_pesquisado.append(dados['linha_pro{}'.format(i)])
                     else:
                         Sg.popup('Produtos sao iguais', title='Mensagem')
                         break
@@ -373,6 +374,7 @@ while True:
             else:
                 Sg.popup('Campo Vazio', title='Mensagem')
             if i == (quantPro - 1):
+
                 selecionar_n_fornecedores = seleciona_fornecedor(quantFor)
                 telas.hide()
 
@@ -451,15 +453,15 @@ while True:
         telas.hide()
 
     if eventos == 'Quem Somos':
-        tela_sobre = sobre()
+        sobre_app = sobre()
         telas.hide()
 
-
-    # Em Inicio clicar em mostrar produtos
+        # Em Inicio clicar em mostrar produtos
     elif telas and eventos == 'Voltar':
         telas.hide()
         tela_inicio.un_hide()
 
-    # Em Inicio clicar em sair
+        # Em Inicio clicar em sair
     elif telas and eventos == 'Sair':
         telas.close()
+        sys.exit()
