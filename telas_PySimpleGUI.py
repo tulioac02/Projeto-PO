@@ -1,5 +1,4 @@
 import PySimpleGUI as Sg
-import Produtos, Fornecedores
 
 # Telas de Cadastro de Produtos
 # Telas para Mostrar Produtos
@@ -11,6 +10,18 @@ import Produtos, Fornecedores
 # Telas para mostrar resultado do calculo
 
 Sg.theme('DefaultNoMoreNagging')
+
+produtos_cadastrados = {0: 'Telha1', 1: 'Telha2', 2: 'Telha3'}
+clientes_cadastrados = {0: 'Minas Novas', 1: 'Turmalina'}
+fornecedores_cadastrados = {0: 'Precom', 1: 'Brasilit', 2: 'Imbralit'}
+
+produto_pesquisado = list()
+cliente_pesquisado = list()
+fornecedor_pesquisado = list()
+
+quantFor = 1
+quantPro = 1
+quantCli = 1
 
 menu_opt = [['&Produtos', ['Cadastrar Produtos', 'Produtos Cadastrados']],
             ['&Lojas', ['Cadastrar Lojas', 'Lojas Cadastradas']],
@@ -35,8 +46,6 @@ def cadastrar_produtos():
     layout_cadastrar_produtos = [
         [Sg.Text('Nome do Produto')],
         [Sg.Input(key='nome_produto', size=(47, 5))],
-        [Sg.Text('Detalhes')],
-        [Sg.Multiline(key='detalhes', size=(45, 3))],
         [Sg.Button('Cadastrar', key='btnCadProduto', button_color='gray', pad=(0, 15))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
@@ -45,9 +54,9 @@ def cadastrar_produtos():
     return cadastrar_pd
 
 
-def mostrar_produtos(ls_prod):
+def mostrar_produtos():
     layout_mostrar_produtos = [
-        [Sg.Listbox(values=[items for items in ls_prod], key='produtos', size=(100, 25))],
+        [Sg.Listbox(values=[items for items in produtos_cadastrados.values()], key='produtos', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
     mostrar_pd = Sg.Window('Lista de Produtos', layout=layout_mostrar_produtos, element_justification='c',
@@ -59,23 +68,17 @@ def cadastrar_loja():
     layout_cadastrar_lojas = [
         [Sg.Text('Nome da Loja')],
         [Sg.Input(key='nome_loja', size=(47, 5))],
-        [Sg.Text('Cidade'), Sg.Text('UF')],
-        [Sg.Input(key='cidade', size=(41, 5)), Sg.Input(key='uf', size=(4, 5))],
-        [Sg.Text('Longitude')],
-        [Sg.Input(key='long', size=(47, 5))],
-        [Sg.Text('Latitude'), Sg.Text('UF')],
-        [Sg.Input(key='lat', size=(47, 5))],
-        [Sg.Button('Cadastrar Loja', button_color='gray', pad=(0, 15))],
+        [Sg.Button('Cadastrar Loja', key='btnCadLoja', button_color='gray', pad=(0, 15))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
-    cad_loja = Sg.Window('Cadastrar uma Loja', layout=layout_cadastrar_lojas, element_justification='c',
+    cad_loja = Sg.Window('Cadastrar Loja', layout=layout_cadastrar_lojas, element_justification='c',
                          size=(800, 400), margins=(0, 0), finalize=True)
     return cad_loja
 
 
 def lojas_cadastradas():
     layout_ls_lojas = [
-        [Sg.Listbox(values=[], key='nome_loja', size=(100, 25))],
+        [Sg.Listbox(values=[items for items in clientes_cadastrados.values()], key='clientes', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 15))]
     ]
     ls_loja = Sg.Window('Lojas Cadastradas', layout=layout_ls_lojas, element_justification='c',
@@ -86,20 +89,9 @@ def lojas_cadastradas():
 def cadastrar_fornecedor():
     layout_cadastrar_fornecedor = [
 
-        [Sg.Text('Nome do Fornecedor'), Sg.Text('Cidade'), Sg.Text('UF')],
-        [Sg.Input(key='nome_fornecedor', size=(20, 10)),
-         Sg.Input(key='cidade', size=(20, 10)), Sg.Input(key='uf', size=(5, 10))],
-
-        [Sg.Text('Frete')],
-        [Sg.Input(key='frete', size=(5, 10))],
-
+        [Sg.Text('Nome do Fornecedor')],
+        [Sg.Input(key='nome_fornecedor', size=(20, 10))],
         [Sg.Button('Cadastrar Fornecedor', key='btnCadFornecedor', button_color='gray', pad=(0, 15))],
-
-        [Sg.Text('Nome do Produto'), Sg.Text('Preço Produto'), Sg.Text('Oferta')],
-        [Sg.Input(key='nome_produto', size=(30, 10)), Sg.Input(key='preço_produto', size=(10, 10)),
-         Sg.Input(key='oferta', size=(5, 5))],
-
-        [Sg.Button('Cadastrar Oferta', key='btnCadOferta', button_color='gray', pad=(0, 15))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
     cad_fornecedor = Sg.Window('Cadastrar um fornecedor', layout=layout_cadastrar_fornecedor, element_justification='c',
@@ -110,7 +102,7 @@ def cadastrar_fornecedor():
 def mostrar_fornecedores():
     layout_mostrar_fornecedor = [
         [Sg.Text('Nome'), Sg.Text('Cidade'), Sg.Text('UF'), Sg.Text('Preço/KM')],
-        [Sg.Listbox(values=[items for items in Fornecedores.listFornecedores], key='fornecedor', size=(80, 20))],
+        [Sg.Listbox(values=[items for items in fornecedores_cadastrados.values()], key='fornecedores', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
     ls_fornecedor = Sg.Window('Fornecedores Cadastrados', layout=layout_mostrar_fornecedor, element_justification='c',
@@ -118,23 +110,38 @@ def mostrar_fornecedores():
     return ls_fornecedor
 
 
-num_linhas = 1
-
-
 def cadastrar_pedidos():
-    layout_linha = [Sg.InputCombo(values=Produtos.listProdutos, key='nome_produto', size=(20, 10)),
-                    Sg.Input(key='nome_fornecedor', size=(25, 10)),
-                    Sg.Input(key='demandas', size=(2, 10))],
-    layout_pedido = [
-        [Sg.Text('Produto'), Sg.Text('Fornecedor'), Sg.Text('Demanda')],
-        layout_linha,
-        [Sg.Button('Adicionar', button_color='gray', pad=(0, 115)),
-         Sg.Button('Finalizar Pedido', button_color='gray', pad=(0, 115)),
-         Sg.Button('Voltar', button_color='gray', pad=(0, 115))]
-    ]
-    pedido = Sg.Window('Cadastrar Pedido', layout=layout_pedido, element_justification='c',
+    num_produtos = [[Sg.Text('')],
+                    [Sg.Text('Digite a quantidade de produtos'),
+                     Sg.Spin([j + 1 for j in range(len(produtos_cadastrados))], key='quantPro', size=(5, 1))],
+                    [Sg.Text('Digite a quantidade de fornecedores'),
+                     Sg.Spin([k + 1 for k in range(len(fornecedores_cadastrados))], key='quantFor', size=(5, 1))],
+                    [Sg.Text('Digite a quantidade de clientes'),
+                     Sg.Spin([l + 1 for l in range(len(clientes_cadastrados))], key='quantCli', size=(5, 1))],
+                    [Sg.Button('Voltar', button_color='gray', pad=(0, 115)),
+                     Sg.Button('Continuar', key='btnContPed', button_color='gray', pad=(0, 115))]]
+
+    pedido = Sg.Window('Cadastrar Pedido', layout=num_produtos, element_justification='c',
                        size=(800, 400), margins=(0, 0), finalize=True)
     return pedido
+
+
+def seleciona_fornecedor(num_for):
+    linhas = []
+    for idx in range(num_for):
+        linhas.append([Sg.InputCombo(values=[items for items in fornecedores_cadastrados.values()],
+                                     key='linha_for{}'.format(idx), size=(50, 35))])
+
+    layout_selec_for = [
+        [Sg.Text('')],
+        *linhas,
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 20))],
+        [Sg.Button('Finalizar Pedido', key='btnFinalFor', button_color='gray', pad=(0, 20))]
+    ]
+
+    selec_for = Sg.Window('Selecionar Fornecedor', layout=layout_selec_for, element_justification='c',
+                          size=(800, 400), margins=(0, 0), finalize=True)
+    return selec_for
 
 
 def calcular_pedido():
@@ -202,16 +209,14 @@ while True:
     if eventos == 'btnCadProduto':
         if dados['nome_produto'] != '':
             nome = dados['nome_produto']
-            p = Produtos.Produtos(nome)
-            Produtos.listProdutos.append(p)
+            p = produtos_cadastrados[len(produtos_cadastrados)] = nome
             Sg.popup('Cadastrado com sucesso', title='Mensagem')
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-
     # Em Inicio clicar em mostrar produtos
     if eventos == 'Produtos Cadastrados':
-        tela_mostrar_pd = mostrar_produtos(Produtos.listProdutos)
+        tela_mostrar_pd = mostrar_produtos()
         tela_inicio.hide()
 
     # Em Inicio clicar em Cadastrar Lojas
@@ -219,6 +224,14 @@ while True:
         # A ideia é que fossem armazenados numa lista de dicionários talvez
         tela_cad_loja = cadastrar_loja()
         tela_inicio.hide()
+
+    if eventos == 'btnCadLoja':
+        if dados['nome_loja'] != '':
+            nome = dados['nome_loja']
+            p = clientes_cadastrados[len(clientes_cadastrados)] = nome
+            Sg.popup('Cadastrado com sucesso', title='Mensagem')
+        else:
+            Sg.popup('Nome do produto em branco!', title='Mensagem')
 
     # Em Inicio clicar em Lojas Cadastradas
     if eventos == 'Lojas Cadastradas':
@@ -231,13 +244,9 @@ while True:
         tela_inicio.hide()
 
     if eventos == 'btnCadFornecedor':
-        if dados['nome_fornecedor'] != '' and dados['cidade'] != '' and dados['frete'] != '':
+        if dados['nome_fornecedor'] != '':
             nome = dados['nome_fornecedor']
-            cidade = dados['cidade']
-            UF = dados['uf']
-            frete = dados['frete']
-            p = Fornecedores.Fornecedores(nome, cidade, UF, frete)
-            Fornecedores.listFornecedores.append(p)
+            p = fornecedores_cadastrados[len(fornecedores_cadastrados)] = nome
             Sg.popup('Cadastrado com sucesso', title='Mensagem')
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
@@ -247,18 +256,30 @@ while True:
         tela_ls_fornecedor = mostrar_fornecedores()
         tela_inicio.hide()
 
-
     if eventos == 'Fazer Pedido':
         tela_pedido = cadastrar_pedidos()
         telas.hide()
 
-
-
     # Em Inicio clicar em  Fornecedores Cadastrados
-    if eventos == 'Finalizar Pedido':
-        tela_calculo = calcular_pedido()
+    if eventos == 'btnContPed':
+        quantFor = dados['quantFor']
+        tela_selec_fornecedor = seleciona_fornecedor(quantFor)
         telas.hide()
 
+    if eventos == 'btnFinalFor':
+        fornecedor_pesquisado = []
+        for i in range(quantFor):
+            if i > 0:
+                if dados['linha_for{}'.format(i)] != dados['linha_for{}'.format(i - 1)]:
+                    fornecedor_pesquisado.append(dados['linha_for{}'.format(i)])
+                else:
+                    Sg.popup('Fornecedores sao iguais', title='Mensagem')
+                    break
+            elif i == 0:
+                fornecedor_pesquisado.append(dados['linha_for{}'.format(i)])
+            if i == (quantFor - 1):
+                Sg.popup('Fornecedores Selecionados', title='Mensagem')
+                Sg.popup_quick_message(fornecedor_pesquisado)
 
 
     if eventos == 'Quem Somos':
