@@ -28,9 +28,9 @@ quantFor = 1
 quantPro = 1
 quantCli = 1
 
-demanda = []
-oferta = []
-custo = []
+demanda = dict()
+oferta = dict()
+custo = dict()
 
 menu_opt = [['&Produtos', ['Cadastrar Produtos', 'Produtos Cadastrados']],
             ['&Lojas', ['Cadastrar Lojas', 'Lojas Cadastradas']],
@@ -260,7 +260,8 @@ def custo_produto(num_for, num_pro, num_cli):
 def calcular_otimizacao():
     valor = Backend.otimizacao(quantPro, quantFor, quantCli, custo, demanda, oferta)
     layout_calc_otimizacao = [
-        [Sg.Text(valor)]
+        [Sg.Text('')],
+        [Sg.Text('Valor Otimizado: '), Sg.Text(valor)]
     ]
 
     calc_otimizacao = Sg.Window('Calcular Otimização', layout=layout_calc_otimizacao, element_justification='c',
@@ -415,53 +416,53 @@ while True:
                 telas.hide()
 
     if eventos == 'btnNextDemanda':
-        demanda = []
+        demanda = dict()
         for i in range(quantPro):
             for j in range(quantCli):
                 if dados['demanda{}_{}'.format(i, j)] != '':
                     if dados['demanda{}_{}'.format(i, j)] >= '0':
-                        demanda.append(int(dados['demanda{}_{}'.format(i, j)]))
+                        demanda[i, j] = int(dados['demanda{}_{}'.format(i, j)])
                     else:
                         Sg.popup('Demanda com valor negativo', title='Mensagem')
                         break
                 else:
                     Sg.popup('Campo Vazio', title='Mensagem')
-                    demanda.append(0)
+                    demanda[i, j] = 0
                 if i == (quantPro - 1) and j == (quantCli - 1):
                     inserir_ofertas = calcular_oferta(quantFor, quantPro)
                     telas.hide()
 
     if eventos == 'btnNextOferta':
-        oferta = []
+        oferta = dict()
         for i in range(quantPro):
             for j in range(quantFor):
                 if dados['oferta{}_{}'.format(i, j)] != '':
                     if dados['oferta{}_{}'.format(i, j)] >= '0':
-                        oferta.append(int(dados['oferta{}_{}'.format(i, j)]))
+                        oferta[i, j] = int(dados['oferta{}_{}'.format(i, j)])
                     else:
                         Sg.popup('Oferta com valor negativo', title='Mensagem')
                         break
                 else:
                     Sg.popup('Campo Vazio', title='Mensagem')
-                    oferta.append(0)
+                    oferta[i, j] = 0
                 if i == (quantPro - 1) and j == (quantFor - 1):
                     inserir_custos = custo_produto(quantFor, quantPro, quantCli)
                     telas.hide()
 
     if eventos == 'btnNextCusto':
-        custo = []
+        custo = dict()
         for i in range(quantPro):
             for j in range(quantFor):
                 for k in range(quantCli):
                     if dados['custo{}_{}_{}'.format(i, j, k)] != '':
                         if dados['custo{}_{}_{}'.format(i, j, k)] >= '0':
-                            custo.append(float(dados['custo{}_{}_{}'.format(i, j, k)]))
+                            custo[i, j, k] = float(dados['custo{}_{}_{}'.format(i, j, k)])
                         else:
                             Sg.popup('Custo com valor negativo', title='Mensagem')
                             break
                     else:
                         Sg.popup('Campo Vazio', title='Mensagem')
-                        custo.append(0.0)
+                        custo[i, j, k] = 0.0
                     if i == (quantPro - 1) and j == (quantFor - 1) and k == (quantCli - 1):
                         calc_otimizacao = calcular_otimizacao()
                         telas.hide()
