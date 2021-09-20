@@ -1,15 +1,16 @@
 import sys
 import PySimpleGUI as Sg
+import Backend
 
 # cadastrar fornecedor X
 # cadastrar Produtos X
 # Cadastrar cliente X
 # Criar pedido X
 # Selecionar fornecedor X
-# Selecionar cliente - estrutura fornecedor
-# selecionar produto - estrutura fornecedor
-# inserir demandas- x
-# inserir ofertas- x
+# Selecionar cliente - estrutura fornecedor X
+# selecionar produto - estrutura fornecedor X
+# inserir demandas- X
+# inserir ofertas- X
 # inserir custo-
 # calculo-
 
@@ -161,8 +162,8 @@ def seleciona_fornecedor(num_for):
     layout_selec_for = [
         [Sg.Text('')],
         *linhas,
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 115)),
-         Sg.Button('Next', key='btnNextFor', button_color='gray', pad=(0, 115))]
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 15)),
+         Sg.Button('Next', key='btnNextFor', button_color='gray', pad=(0, 15))]
     ]
 
     selec_for = Sg.Window('Selecionar Fornecedor', layout=layout_selec_for, element_justification='c',
@@ -201,8 +202,8 @@ def calcular_demanda(num_cli, num_pro):
     layout_calc_demanda = [
         [Sg.Text('')],
         *linhas_demanda,
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 115)),
-         Sg.Button('Next', key='btnNextDemanda', button_color='gray', pad=(0, 115))]
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 15)),
+         Sg.Button('Next', key='btnNextDemanda', button_color='gray', pad=(0, 15))]
     ]
 
     calc_demanda = Sg.Window('Cadastrar Demanda', layout=layout_calc_demanda, element_justification='c',
@@ -224,8 +225,8 @@ def calcular_oferta(num_for, num_pro):
     layout_calc_oferta = [
         [Sg.Text('')],
         *linhas_oferta,
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 115)),
-         Sg.Button('Next', key='btnNextOferta', button_color='gray', pad=(0, 115))]
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 15)),
+         Sg.Button('Next', key='btnNextOferta', button_color='gray', pad=(0, 15))]
     ]
 
     calc_oferta = Sg.Window('Cadastrar Oferta', layout=layout_calc_oferta, element_justification='c',
@@ -237,29 +238,29 @@ def custo_produto(num_for, num_pro, num_cli):
     linhas_custo = []
 
     for idx_pro in range(num_pro):
-        linhas_custo.append([Sg.Text(produto_pesquisado[idx_pro])])
-        linhas_custo.append([Sg.Text('')])
-        for idx_for in range(num_for):
-            linhas_custo.append([Sg.Text(fornecedor_pesquisado[idx_for])])
-            for idx_cli in range(num_cli):
-                linhas_custo.append([Sg.Text(cliente_pesquisado[idx_cli]),
-                                     Sg.Input(key='oferta{}_{}_{}'.format(idx_pro, idx_for, idx_cli), size=(10, 10))])
+        linhas_custo.append([Sg.Text(produto_pesquisado[idx_pro])]),
+        for idx_cli in range(num_cli):
+            linhas_custo.append([Sg.Text(cliente_pesquisado[idx_cli])]),
+            for idx_for in range(num_for):
+                    linhas_custo.append([Sg.Text(fornecedor_pesquisado[idx_for]),
+                                         Sg.Input(key='custo{}_{}_{}'.format(idx_pro, idx_for, idx_cli))])
 
     layout_calc_custo = [
         [Sg.Text('')],
         *linhas_custo,
-        [Sg.Button('Voltar', button_color='gray', pad=(0, 115)),
-         Sg.Button('Next', key='btnNextCusto', button_color='gray', pad=(0, 115))]
+        [Sg.Button('Voltar', button_color='gray', pad=(0, 15)),
+         Sg.Button('Next', key='btnNextCusto', button_color='gray', pad=(0, 15))]
     ]
 
     calc_custo = Sg.Window('Cadastrar Custo', layout=layout_calc_custo, element_justification='c',
-                           size=(1000, 600), margins=(0, 0), finalize=True)
+                           size=(1000, 810), margins=(0, 0), finalize=True)
     return calc_custo
 
 
 def calcular_otimizacao():
+    valor = Backend.otimizacao(produto_pesquisado, fornecedor_pesquisado, cliente_pesquisado, custo, demanda, oferta)
     layout_calc_otimizacao = [
-        [Sg.Text('')]
+        [Sg.Text(valor)]
     ]
 
     calc_otimizacao = Sg.Window('Calcular Otimização', layout=layout_calc_otimizacao, element_justification='c',
@@ -374,7 +375,6 @@ while True:
             else:
                 Sg.popup('Campo Vazio', title='Mensagem')
             if i == (quantPro - 1):
-
                 selecionar_n_fornecedores = seleciona_fornecedor(quantFor)
                 telas.hide()
 
@@ -449,8 +449,22 @@ while True:
                     telas.hide()
 
     if eventos == 'btnNextCusto':
-        calc_otimizacao = calcular_otimizacao()
-        telas.hide()
+        custo = []
+        for i in range(quantPro):
+            for j in range(quantFor):
+                for k in range(quantCli):
+                    if dados['custo{}_{}_{}'.format(i, j, k)] != '':
+                        if dados['custo{}_{}_{}'.format(i, j, k)] >= '0':
+                            custo.append(dados['custo{}_{}_{}'.format(i, j, k)])
+                        else:
+                            Sg.popup('Custo com valor negativo', title='Mensagem')
+                            break
+                    else:
+                        Sg.popup('Campo Vazio', title='Mensagem')
+                        custo.append('0')
+                    if i == (quantPro - 1) and j == (quantFor - 1) and k == (quantCli - 1):
+                        calc_otimizacao = calcular_otimizacao()
+                        telas.hide()
 
     if eventos == 'Quem Somos':
         sobre_app = sobre()
