@@ -276,6 +276,8 @@ def sobre():
         [Sg.Text('Grupo: Aguinele Queiroz')],
         [Sg.Text('Grupo: Brenda Orlandi')],
         [Sg.Text('Grupo: Túlio Cordeiro')],
+        [Sg.Text('Grupo: Luis Otávio')],
+        [Sg.Text('Grupo: Rafael Lucas')],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 45))]
     ]
     sobre_tela = Sg.Window('Sobre...', layout=layout_sobre, element_justification='c',
