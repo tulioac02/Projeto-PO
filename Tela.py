@@ -27,13 +27,13 @@ demanda = dict()
 oferta = dict()
 custo = dict()
 
+''' Menu '''
 menu_opt = [['&Produtos', ['Cadastrar Produtos', 'Produtos Cadastrados']],
             ['&Lojas', ['Cadastrar Lojas', 'Lojas Cadastradas']],
             ['&Fornecedores', ['Cadastrar Fornecedores', 'Fornecedores Cadastrados']],
             ['&Orçamentos', ['Fazer Pedido']],
             ['&Sobre', ['Quem Somos']]
             ]
-
 
 def home():
     """Função para criar o layout e a janela inicial"""
@@ -42,6 +42,7 @@ def home():
         [Sg.Text('Bem Vindo!', auto_size_text=True, pad=(0, 150))],
         [Sg.Button('Sair', button_color='gray', pad=(0, 30))]
     ]
+
     my_home = Sg.Window('Inicio', layout=layout_home, element_justification='c',
                         size=(1000, 600), margins=(0, 0), finalize=True)
     return my_home
@@ -72,7 +73,7 @@ def mostrar_produtos():
 
 
 def cadastrar_loja():
-    """Cria a janela para o cadastro de lojas/cliente"""
+    """Cria a janela para cadastrar as lojas/cliente"""
     layout_cadastrar_lojas = [
         [Sg.Text('Nome da Loja')],
         [Sg.Input(key='nome_loja', size=(47, 5))],
@@ -85,7 +86,7 @@ def cadastrar_loja():
 
 
 def lojas_cadastradas():
-    """Cria a janela listar os lojas/cliente cadastradas"""
+    """Cria a janela para listar os lojas/cliente já cadastradas"""
     layout_ls_lojas = [
         [Sg.Listbox(values=[items for items in clientes_cadastrados.values()], key='clientes', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 15))]
@@ -96,8 +97,8 @@ def lojas_cadastradas():
 
 
 def cadastrar_fornecedor():
+    """Cria a janela para cadastrar os fornecedores"""
     layout_cadastrar_fornecedor = [
-        """Cria a janela para cadastrar os fornecedores"""
         [Sg.Text('Nome do Fornecedor')],
         [Sg.Input(key='nome_fornecedor', size=(20, 10))],
         [Sg.Button('Cadastrar Fornecedor', key='btnCadFornecedor', button_color='gray', pad=(0, 15))],
@@ -139,7 +140,7 @@ def cadastrar_pedidos():
 
 # Selecionar produtos
 def selecionar_produtos(num_pro):
-    """"Cria a janela para escolher os produtos já cadastrados"""
+    """"Cria a janela para escolher os produtos para a consulta"""
     linhas = []
     for idx in range(num_pro):
         linhas.append([Sg.InputCombo(values=[items for items in produtos_cadastrados.values()],
@@ -157,7 +158,7 @@ def selecionar_produtos(num_pro):
 
 
 def seleciona_fornecedor(num_for):
-    """"Cria a janela para escolher os fornecedores já cadastrados"""
+    """"Cria a janela para escolher os fornecedores para a consulta"""
     linhas = []
     for idx in range(num_for):
         linhas.append([Sg.InputCombo(values=[items for items in fornecedores_cadastrados.values()],
@@ -177,7 +178,7 @@ def seleciona_fornecedor(num_for):
 
 # Selecionar clientes
 def selecionar_clientes(num_cli):
-    """"Cria a janela para escolher as lojas/clientes já cadastrados"""
+    """"Cria a janela para escolher as lojas/clientes para a consulta"""
     linhas = []
     for idx in range(num_cli):
         linhas.append([Sg.InputCombo(values=[items for items in clientes_cadastrados.values()],
@@ -242,7 +243,7 @@ def calcular_oferta(num_for, num_pro):
 
 
 def custo_produto(num_for, num_pro, num_cli):
-    """Cria a janela para inserir o custo de produto por fabrica por cliente"""
+    """Cria a janela para inserir o custo dos produtos de cada fabrica por cliente"""
     linhas_custo = []
 
     for idx_pro in range(num_pro):
@@ -250,8 +251,8 @@ def custo_produto(num_for, num_pro, num_cli):
         for idx_cli in range(num_cli):
             linhas_custo.append([Sg.Text(cliente_pesquisado[idx_cli])]),
             for idx_for in range(num_for):
-                    linhas_custo.append([Sg.Text(fornecedor_pesquisado[idx_for]),
-                                         Sg.Input(key='custo{}_{}_{}'.format(idx_pro, idx_for, idx_cli))])
+                linhas_custo.append([Sg.Text(fornecedor_pesquisado[idx_for]),
+                                     Sg.Input(key='custo{}_{}_{}'.format(idx_pro, idx_for, idx_cli))])
 
     layout_calc_custo = [
         [Sg.Text('')],
@@ -279,7 +280,7 @@ def calcular_otimizacao():
 
 
 def sobre():
-    """Cria a janela para apresentar os dados sobre o projeto"""
+    """Cria a janela para apresentar o time de desenvolvimento"""
     layout_sobre = [
         [Sg.Menu(menu_opt)],
 
@@ -294,14 +295,16 @@ def sobre():
                            size=(1000, 600), margins=(0, 0), finalize=True)
     return sobre_tela
 
-
+""" Telas chamada na Home """
 tela_inicio, registrar_produtos, listar_produtos, registrar_lojas, listar_lojas, registrar_fornecedores, \
 listar_fornecedores, realizar_pedido, selecionar_n_produtos, selecionar_n_fornecedores, seleciona_n_clientes, \
 inserir_demandas, inserir_ofertas, inserir_custos, calc_otimizacao, sobre_app = \
     home(), None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
 while True:
+    """ Lê os dados inseridos, eventos e telas """
     telas, eventos, dados = Sg.read_all_windows()
+
     """Usuário fecha a janela no 'x'"""
     if eventos == Sg.WINDOW_CLOSED:
         break
@@ -311,7 +314,7 @@ while True:
         registrar_produtos = cadastrar_produtos()
         telas.hide()
 
-    """Inserir os dados de produtos na lista"""
+    """Inserir os dados fornecidos na lista de Produtos"""
     if eventos == 'btnCadProduto':
         if dados['nome_produto'] != '':
             nome = dados['nome_produto']
@@ -320,17 +323,18 @@ while True:
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-    """Em Inicio clicar em mostrar produtos"""
+    """Abre a janela de listar produtos"""
     if eventos == 'Produtos Cadastrados':
         listar_produtos = mostrar_produtos()
         telas.hide()
 
-    """Em Inicio clicar em Cadastrar Lojas"""
+    """Abre a janela de Cadastrar lojas"""
     if eventos == 'Cadastrar Lojas':
         # A ideia é que fossem armazenados numa lista de dicionários talvez
         registrar_lojas = cadastrar_loja()
         telas.hide()
 
+    """Inserir os dados fornecidos na lista de Lojas"""
     if eventos == 'btnCadLoja':
         if dados['nome_loja'] != '':
             nome = dados['nome_loja']
@@ -339,34 +343,36 @@ while True:
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-    """Em Inicio clicar em Lojas Cadastradas"""
+    """Abre a janela de listar lojas"""
     if eventos == 'Lojas Cadastradas':
         listar_lojas = lojas_cadastradas()
         telas.hide()
 
-    """Em Inicio clicar em Cadastrar Fornecedor"""
+    """Abre a janela de cadastrar fornecedores"""
     if eventos == 'Cadastrar Fornecedores':
         registrar_fornecedores = cadastrar_fornecedor()
         telas.hide()
 
+    """Inserir os dados fornecidos na lista de fornecedores"""
     if eventos == 'btnCadFornecedor':
         if dados['nome_fornecedor'] != '':
             nome = dados['nome_fornecedor']
-            p = fornecedores_cadastrados[len(fornecedores_cadastrados)] = nome
+            fornecedores_cadastrados[len(fornecedores_cadastrados)] = nome
             Sg.popup('Cadastrado com sucesso', title='Mensagem')
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-    """Em Inicio clicar em  Fornecedores Cadastrados"""
+    """Abre a janela de listar fornecedores"""
     if eventos == 'Fornecedores Cadastrados':
         listar_fornecedores = mostrar_fornecedores()
         telas.hide()
 
+    """Abre a janela de cadastrar pedido"""
     if eventos == 'Fazer Pedido':
         realizar_pedido = cadastrar_pedidos()
         telas.hide()
 
-    """Em Inicio clicar em  Fornecedores Cadastrados"""
+    """Insere os dados de quantidade de fornecedores, lojas e produtos em uma variável"""
     if eventos == 'btnContPed':
         quantFor = int(dados['quantFor'])
         quantCli = int(dados['quantCli'])
@@ -374,9 +380,11 @@ while True:
         selecionar_n_produtos = selecionar_produtos(quantPro)
         telas.hide()
 
+    """Guarda os produtos selecionados pelo usuário em uma lista"""
     if eventos == 'btnNextPro':
         produto_pesquisado = []
         for i in range(quantPro):
+            """Teste para não armazenar campos em branco ou produtos duplicados"""
             if dados['linha_pro{}'.format(i)] != '':
                 if i > 0:
                     if dados['linha_pro{}'.format(i)] != dados['linha_pro{}'.format(i - 1)]:
@@ -392,9 +400,11 @@ while True:
                 selecionar_n_fornecedores = seleciona_fornecedor(quantFor)
                 telas.hide()
 
+    """Guarda os fornecedores selecionados pelo usuário em uma lista"""
     if eventos == 'btnNextFor':
         fornecedor_pesquisado = []
         for i in range(quantFor):
+            """Teste para não armazenar campos em branco ou fornecedores duplicados"""
             if dados['linha_for{}'.format(i)] != '':
                 if i > 0:
                     if dados['linha_for{}'.format(i)] != dados['linha_for{}'.format(i - 1)]:
@@ -410,9 +420,11 @@ while True:
                 seleciona_n_clientes = selecionar_clientes(quantCli)
                 telas.hide()
 
+    """Guarda os clientes selecionados pelo usuário em uma lista"""
     if eventos == 'btnNextCli':
         cliente_pesquisado = []
         for i in range(quantCli):
+            """Teste para não armazenar campos em branco ou clientes duplicados"""
             if dados['linha_cli{}'.format(i)] != '':
                 if i > 0:
                     if dados['linha_cli{}'.format(i)] != dados['linha_cli{}'.format(i - 1)]:
@@ -428,6 +440,7 @@ while True:
                 inserir_demandas = calcular_demanda(quantCli, quantPro)
                 telas.hide()
 
+    """Guarda em um dicionário as demandas de cada produto inseridos pelo usuário"""
     if eventos == 'btnNextDemanda':
         demanda = dict()
         for i in range(quantPro):
@@ -445,6 +458,7 @@ while True:
                     inserir_ofertas = calcular_oferta(quantFor, quantPro)
                     telas.hide()
 
+    """Guarda em um dicionário as ofertas de cada produto inseridos pelo usuário"""
     if eventos == 'btnNextOferta':
         oferta = dict()
         for i in range(quantPro):
@@ -462,6 +476,7 @@ while True:
                     inserir_custos = custo_produto(quantFor, quantPro, quantCli)
                     telas.hide()
 
+    """Guarda em um dicionário os custos de cada produto inseridos pelo usuário"""
     if eventos == 'btnNextCusto':
         custo = dict()
         for i in range(quantPro):
@@ -480,16 +495,17 @@ while True:
                         calc_otimizacao = calcular_otimizacao()
                         telas.hide()
 
+    """Abre a janela de QUem Somos"""
     if eventos == 'Quem Somos':
         sobre_app = sobre()
         telas.hide()
 
-        # Em Inicio clicar em mostrar produtos
+        """Volta para a janela Home"""
     elif telas and eventos == 'Voltar':
         telas.hide()
         tela_inicio.un_hide()
 
-        # Em Inicio clicar em sair
+        """Finaliza o sistema"""
     elif telas and eventos == 'Sair':
         telas.close()
         sys.exit()
