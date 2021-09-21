@@ -1,18 +1,13 @@
+"""
+Módulo principal
+
+Apresenta a interação com usuário, dados armazenados e a opções disponíveis de menu
+
+A partir dele é chamada a função para realizar a operação de otimização pelo Gurobi
+"""
 import sys
 import PySimpleGUI as Sg
 import Backend
-
-# cadastrar fornecedor X
-# cadastrar Produtos X
-# Cadastrar cliente X
-# Criar pedido X
-# Selecionar fornecedor X
-# Selecionar cliente - estrutura fornecedor X
-# selecionar produto - estrutura fornecedor X
-# inserir demandas- X
-# inserir ofertas- X
-# inserir custo-
-# calculo-
 
 Sg.theme('DefaultNoMoreNagging')
 
@@ -41,6 +36,7 @@ menu_opt = [['&Produtos', ['Cadastrar Produtos', 'Produtos Cadastrados']],
 
 
 def home():
+    """Função para criar o layout e a janela inicial"""
     layout_home = [
         [Sg.Menu(menu_opt)],
         [Sg.Text('Bem Vindo!', auto_size_text=True, pad=(0, 150))],
@@ -52,6 +48,7 @@ def home():
 
 
 def cadastrar_produtos():
+    """Cria a janela para o cadastro de produtos"""
     layout_cadastrar_produtos = [
         [Sg.Text('Nome do Produto')],
         [Sg.Input(key='nome_produto', size=(47, 5))],
@@ -64,6 +61,7 @@ def cadastrar_produtos():
 
 
 def mostrar_produtos():
+    """Cria a janela para listar os produtos já cadastrados"""
     layout_mostrar_produtos = [
         [Sg.Listbox(values=[items for items in produtos_cadastrados.values()], key='produtos', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
@@ -74,6 +72,7 @@ def mostrar_produtos():
 
 
 def cadastrar_loja():
+    """Cria a janela para o cadastro de lojas/cliente"""
     layout_cadastrar_lojas = [
         [Sg.Text('Nome da Loja')],
         [Sg.Input(key='nome_loja', size=(47, 5))],
@@ -86,6 +85,7 @@ def cadastrar_loja():
 
 
 def lojas_cadastradas():
+    """Cria a janela listar os lojas/cliente cadastradas"""
     layout_ls_lojas = [
         [Sg.Listbox(values=[items for items in clientes_cadastrados.values()], key='clientes', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 15))]
@@ -97,7 +97,7 @@ def lojas_cadastradas():
 
 def cadastrar_fornecedor():
     layout_cadastrar_fornecedor = [
-
+        """Cria a janela para cadastrar os fornecedores"""
         [Sg.Text('Nome do Fornecedor')],
         [Sg.Input(key='nome_fornecedor', size=(20, 10))],
         [Sg.Button('Cadastrar Fornecedor', key='btnCadFornecedor', button_color='gray', pad=(0, 15))],
@@ -109,6 +109,7 @@ def cadastrar_fornecedor():
 
 
 def mostrar_fornecedores():
+    """"Cria a janela para listar os fornecedores cadastrados"""
     layout_mostrar_fornecedor = [
         [Sg.Text('Nome'), Sg.Text('Cidade'), Sg.Text('UF'), Sg.Text('Preço/KM')],
         [Sg.Listbox(values=[items for items in fornecedores_cadastrados.values()], key='fornecedores', size=(100, 25))],
@@ -120,6 +121,7 @@ def mostrar_fornecedores():
 
 
 def cadastrar_pedidos():
+    """Cria a janela para selecionar a quantidade de produtos, fornecedores e clientes da consulta"""
     num_produtos = [[Sg.Text('')],
                     [Sg.Text('Digite a quantidade de produtos'),
                      Sg.Spin([j + 1 for j in range(len(produtos_cadastrados))], key='quantPro', size=(5, 1))],
@@ -137,6 +139,7 @@ def cadastrar_pedidos():
 
 # Selecionar produtos
 def selecionar_produtos(num_pro):
+    """"Cria a janela para escolher os produtos já cadastrados"""
     linhas = []
     for idx in range(num_pro):
         linhas.append([Sg.InputCombo(values=[items for items in produtos_cadastrados.values()],
@@ -154,6 +157,7 @@ def selecionar_produtos(num_pro):
 
 
 def seleciona_fornecedor(num_for):
+    """"Cria a janela para escolher os fornecedores já cadastrados"""
     linhas = []
     for idx in range(num_for):
         linhas.append([Sg.InputCombo(values=[items for items in fornecedores_cadastrados.values()],
@@ -173,6 +177,7 @@ def seleciona_fornecedor(num_for):
 
 # Selecionar clientes
 def selecionar_clientes(num_cli):
+    """"Cria a janela para escolher as lojas/clientes já cadastrados"""
     linhas = []
     for idx in range(num_cli):
         linhas.append([Sg.InputCombo(values=[items for items in clientes_cadastrados.values()],
@@ -191,6 +196,7 @@ def selecionar_clientes(num_cli):
 
 
 def calcular_demanda(num_cli, num_pro):
+    """Cria janela para inserir a demanda dos produtos por cliente"""
     linhas_demanda = []
     for idx_pro in range(num_pro):
         linhas_demanda.append([Sg.Text(produto_pesquisado[idx_pro])])
@@ -212,6 +218,7 @@ def calcular_demanda(num_cli, num_pro):
 
 
 def calcular_oferta(num_for, num_pro):
+    """Cria a janela para inserir a oferta dos produtos por fonecedores"""
     linhas_oferta = []
 
     for idx_pro in range(num_pro):
@@ -235,6 +242,7 @@ def calcular_oferta(num_for, num_pro):
 
 
 def custo_produto(num_for, num_pro, num_cli):
+    """Cria a janela para inserir o custo de produto por fabrica por cliente"""
     linhas_custo = []
 
     for idx_pro in range(num_pro):
@@ -258,6 +266,7 @@ def custo_produto(num_for, num_pro, num_cli):
 
 
 def calcular_otimizacao():
+    """Cria a janela para chamar a função de otimização"""
     valor = Backend.otimizacao(quantPro, quantFor, quantCli, custo, demanda, oferta)
     layout_calc_otimizacao = [
         [Sg.Text('')],
@@ -270,6 +279,7 @@ def calcular_otimizacao():
 
 
 def sobre():
+    """Cria a janela para apresentar os dados sobre o projeto"""
     layout_sobre = [
         [Sg.Menu(menu_opt)],
 
@@ -292,15 +302,16 @@ inserir_demandas, inserir_ofertas, inserir_custos, calc_otimizacao, sobre_app = 
 
 while True:
     telas, eventos, dados = Sg.read_all_windows()
-    # usuário fecha a janela no "x"
+    """Usuário fecha a janela no 'x'"""
     if eventos == Sg.WINDOW_CLOSED:
         break
 
-    # cadastro de produtos
+    """Abre a janela de cadastro de produtos"""
     if eventos == 'Cadastrar Produtos':
         registrar_produtos = cadastrar_produtos()
         telas.hide()
 
+    """Inserir os dados de produtos na lista"""
     if eventos == 'btnCadProduto':
         if dados['nome_produto'] != '':
             nome = dados['nome_produto']
@@ -309,12 +320,12 @@ while True:
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-    # Em Inicio clicar em mostrar produtos
+    """Em Inicio clicar em mostrar produtos"""
     if eventos == 'Produtos Cadastrados':
         listar_produtos = mostrar_produtos()
         telas.hide()
 
-    # Em Inicio clicar em Cadastrar Lojas
+    """Em Inicio clicar em Cadastrar Lojas"""
     if eventos == 'Cadastrar Lojas':
         # A ideia é que fossem armazenados numa lista de dicionários talvez
         registrar_lojas = cadastrar_loja()
@@ -328,12 +339,12 @@ while True:
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-    # Em Inicio clicar em Lojas Cadastradas
+    """Em Inicio clicar em Lojas Cadastradas"""
     if eventos == 'Lojas Cadastradas':
         listar_lojas = lojas_cadastradas()
         telas.hide()
 
-    # Em Inicio clicar em Cadastrar Fornecedor
+    """Em Inicio clicar em Cadastrar Fornecedor"""
     if eventos == 'Cadastrar Fornecedores':
         registrar_fornecedores = cadastrar_fornecedor()
         telas.hide()
@@ -346,7 +357,7 @@ while True:
         else:
             Sg.popup('Nome do produto em branco!', title='Mensagem')
 
-    # Em Inicio clicar em  Fornecedores Cadastrados
+    """Em Inicio clicar em  Fornecedores Cadastrados"""
     if eventos == 'Fornecedores Cadastrados':
         listar_fornecedores = mostrar_fornecedores()
         telas.hide()
@@ -355,7 +366,7 @@ while True:
         realizar_pedido = cadastrar_pedidos()
         telas.hide()
 
-    # Em Inicio clicar em  Fornecedores Cadastrados
+    """Em Inicio clicar em  Fornecedores Cadastrados"""
     if eventos == 'btnContPed':
         quantFor = int(dados['quantFor'])
         quantCli = int(dados['quantCli'])
