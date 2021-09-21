@@ -35,6 +35,7 @@ menu_opt = [['&Produtos', ['Cadastrar Produtos', 'Produtos Cadastrados']],
             ['&Sobre', ['Quem Somos']]
             ]
 
+
 def home():
     """Função para criar o layout e a janela inicial"""
     layout_home = [
@@ -64,6 +65,7 @@ def cadastrar_produtos():
 def mostrar_produtos():
     """Cria a janela para listar os produtos já cadastrados"""
     layout_mostrar_produtos = [
+        [Sg.Text('')],
         [Sg.Listbox(values=[items for items in produtos_cadastrados.values()], key='produtos', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
@@ -88,6 +90,7 @@ def cadastrar_loja():
 def lojas_cadastradas():
     """Cria a janela para listar os lojas/cliente já cadastradas"""
     layout_ls_lojas = [
+        [Sg.Text('')],
         [Sg.Listbox(values=[items for items in clientes_cadastrados.values()], key='clientes', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 15))]
     ]
@@ -112,7 +115,7 @@ def cadastrar_fornecedor():
 def mostrar_fornecedores():
     """"Cria a janela para listar os fornecedores cadastrados"""
     layout_mostrar_fornecedor = [
-        [Sg.Text('Nome'), Sg.Text('Cidade'), Sg.Text('UF'), Sg.Text('Preço/KM')],
+        [Sg.Text('')],
         [Sg.Listbox(values=[items for items in fornecedores_cadastrados.values()], key='fornecedores', size=(100, 25))],
         [Sg.Button('Voltar', button_color='gray', pad=(0, 20))]
     ]
@@ -294,6 +297,7 @@ def sobre():
     sobre_tela = Sg.Window('Sobre...', layout=layout_sobre, element_justification='c',
                            size=(1000, 600), margins=(0, 0), finalize=True)
     return sobre_tela
+
 
 """ Telas chamada na Home """
 tela_inicio, registrar_produtos, listar_produtos, registrar_lojas, listar_lojas, registrar_fornecedores, \
